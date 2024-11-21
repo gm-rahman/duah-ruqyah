@@ -1,40 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Project Roadmap and Code Overview
+## Introduction
+**This document outlines the roadmap and architecture for a web application designed to manage categories, subcategories, and "duas" (prayers). It highlights the backend and frontend functionalities, key components, and data flow.**
+## Project Live [Link](https://duah-ruqyah.vercel.app/)
+### Backend
+##### Server Setup (server.js)
+- Framework: Express.js is used to create a REST API.
+- Database: SQLite is used via better-sqlite3 for efficient query handling.
+- Middleware:
+- cors: Enables cross-origin requests.
+- Endpoints:
+/categories: Fetches categories, subcategories, and duas by querying the SQLite database.
+- Error Handling: Captures errors and responds with a status code of 500.
+#### Data Management (data.js)
+- Functionality: getCategoriesWithDetails retrieves and structures category, subcategory, and dua data from the database.
+- SQL Query:
+Joins category, sub_category, and dua tables.
+    - Handles relationships:
+    - Categories can have subcategories.
+    - Subcategories and categories can both have duas.
+    - Orders data by cat_id, subcat_id, and dua_id.
+- Data Transformation:
+    - Constructs a nested object structure to group subcategories under categories and duas under subcategories or directly under categories.
+Avoids duplicate entries.
+#### TypeScript Definitions (definitions.ts)
+- Defines interfaces for:
+- Category: Represents a category and its metadata.
+- SubCategory: Represents a subcategory, linked to a category.
+- Dua: Represents a prayer with translations, references, and audio.
+### Frontend
+#### Page Layout (page.tsx)
+- Structure:
+    - Uses flexbox to create a responsive layout with a Sidebar, MainContext, and RightSidebar.
+#### Main Context (MainContext.tsx)
+- Purpose:
+    - Fetches categories from the backend using fetchCategories.
+Renders the Header and MainCard components.
+- Data Flow:
+    - Fetches category data at runtime and passes it to MainCard.
+#### MainCard Component (MainCard.tsx)
+- State Management:
+    - Manages:
+        - Currently expanded category.
+        - Selected category and subcategory.
+        - Displayed duas.
+- User Interactions:
+    - Clicking a category expands its subcategories and displays its duas.
+    - Clicking a subcategory filters and displays its associated duas.
+- Helper Functions:
+    - getAllCategoryDuas: Gathers all duas for a category, including those in its subcategories.
+#### Category Sidebar (CategorySidebar.tsx)
+- Purpose:
+    - Lists categories and subcategories.
+    - Allows users to expand categories and view associated subcategories.
+- Search Functionality:
+    - Input field to filter categories (to be implemented).
+- UI Highlights:
+    - Selected category and subcategory are visually highlighted.
+    - Uses icons for category representation.
+## Data Flow
+### Backend:
 
-## Getting Started
+Server listens on port 3001.
+Endpoint /categories queries SQLite database.
+Returns a nested JSON structure of categories, subcategories, and duas.
+Frontend:
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+Fetches data via fetchCategories.
+Passes the data through MainContext to MainCard.
+Renders interactive components (CategorySidebar, ContentList) for user navigation.
+Roadmap
+>Milestone: Core Features
+Complete current functionalities:
+Fetching categories, subcategories, and duas.
+Displaying data interactively in the frontend.
